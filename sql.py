@@ -1,6 +1,4 @@
-'''
-Create a SQLite3 table and populate it with mock data
-'''
+#Create a SQLite3 table and populate it with mock data
 
 import sqlite3
 
