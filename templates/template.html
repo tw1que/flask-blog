@@ -3,6 +3,7 @@
 <html>
 <head>
 	<title>Welcome, friends!</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 	<div class="container">
@@ -10,7 +11,7 @@
 			<div class="flash">{{ message }}</div>
 		{% endfor %}
 		{% if error %}
-			<p class="error"><strong>Error:</strong> {{ error }}</p>
+			<div class="error"><strong>Error:</strong> {{ error }} </div>
 		{% endif %}
 		<!-- inheritance -->
 		{% block content %}

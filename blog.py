@@ -18,7 +18,7 @@ app.config.from_object(__name__)
 
 # function for connecting to the database
 def connect_db():
-	return sqlite3.connect(app.config('DATABASE'))
+	return sqlite3.connect(app.config['DATABASE'])
 
 def login_required(func):
 
@@ -44,7 +44,6 @@ def login():
 
 		else:
 			session['logged_in'] = True
-			print(redirect(url_for('main')).get_data())
 			return redirect(url_for('main'))
 
 	return render_template('login.html', error=error), status_code
@@ -52,7 +51,28 @@ def login():
 @app.route('/main')
 @login_required
 def main():
-	return render_template('main.html')
+	with connect_db() as g.db:
+		cur = g.db.execute("SELECT * FROM posts")
+		posts = [dict(title=row[0], post=row[1]) for row in cur.fetchall()]
+
+	return render_template('main.html', posts=posts)
+
+@app.route('/add', methods=['POST'])
+@login_required
+def add():
+	title = request.form['title']
+	post = request.form['post']
+
+	if not title or not post:
+		flash('All fields are required. Please try again')
+		return redirect(url_for('main'))
+
+	else:
+		with connect_db() as g.db:
+			g.db.execute("INSERT INTO posts (title, post) VALUES (?,?)", 
+				[request.form['title'], request.form['post']])
+		flash('New entry was succesfully posted!')
+		return redirect(url_for('main'))
 
 @app.route('/logout')
 def logout():
